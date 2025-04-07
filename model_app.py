@@ -48,9 +48,11 @@ def vgg16_model():
 
 st.title("Classification of the images from Fashion MNIST dataset")
 
-model_choice = st.selectbox("Choose the model for classification:", ("Custom CNN", "VGG16"))
+st.markdown("### Choose the model for classification:")
+model_choice = st.selectbox("", ("Custom CNN", "VGG16"))
 
-uploaded_file = st.file_uploader('Upload the image in either PNG format, or JPG', type=["png", "jpg", "jpeg"])
+st.markdown('### Upload the image in either PNG format, or JPG:')
+uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file).convert('L')
@@ -75,9 +77,12 @@ if uploaded_file is not None:
     predicted_class = np.argmax(prediction)
 
     st.subheader("Results of classification:")
-    for i, prob in enumerate(prediction):
-        st.write(f"**{class_names[i]}**: {prob:.2f}")
-    st.write(f"**Predicted class:**  {class_names[predicted_class]}")
+    results = {
+        "**Class Names**": class_names,
+        "**Probability**": [f"{p:.2f}" for p in prediction]
+    }
+    st.table(results)
+    st.markdown(f"### Predicted class: <span style='font-weight: normal'>{class_names[predicted_class]}</span>", unsafe_allow_html=True)
 
 if st.checkbox("Show visualization of model's loss and accuracy"):
     history = np.load("streamlit_files/history_cnn.npy", allow_pickle=True).item() if model_choice == "Custom CNN" else np.load("streamlit_files/history_vgg.npy", allow_pickle=True).item()
